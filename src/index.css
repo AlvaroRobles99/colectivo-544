@@ -1,0 +1,41 @@
+@import "tailwindcss";
+
+@theme {
+  --color-ink: #0b1a2e;
+  --color-paper: #f2f5f9;
+  --color-card: #ffffff;
+  --color-amber: #ffb224;
+  --color-slate: #5c6b7e;
+  --color-hairline: #d8dfe8;
+
+  --font-display: "Archivo Variable", "Archivo", system-ui, -apple-system, sans-serif;
+  --font-body: "Instrument Sans Variable", "Instrument Sans", system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono Variable", "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+@layer base {
+  body {
+    @apply bg-paper font-body text-ink antialiased;
+  }
+
+  /* Time figures line up column-to-column in the schedule tables. */
+  time {
+    font-variant-numeric: tabular-nums;
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--color-amber);
+    outline-offset: 2px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
