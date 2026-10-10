@@ -35,7 +35,7 @@ type Direction = "ida" | "vuelta";
 type TimeStr = `${number}:${number}`; // "HH:MM"
 interface StopSchedule {
   times: TimeStr[];                       // orden cronológico del día de servicio (00:00..03:59 al final)
-  notes?: { time: TimeStr; note: string }[]; // p.ej. "HASTA EL MATADERO"
+  notes?: { time: TimeStr | null; note: string }[]; // p.ej. "HASTA EL MATADERO" → time null cuando no se ata a una hora
 }
 type ScheduleTable = Record<Direction, Partial<Record<DayType, Record<string, StopSchedule>>>>;
 ```
@@ -57,9 +57,9 @@ type ScheduleTable = Record<Direction, Partial<Record<DayType, Record<string, St
 - **Motion**: countdown 1s; "encendido" del cartel al cargar; respeta reduced motion.
 
 ## Tasks
-- [ ] T1 — Scaffold: package.json (bun), vite+react+ts, tailwind v4, vitest, fontsource, configs, .gitignore, index.html, git init (rama `feat/colectivo-544-app`). Check: `bun install` sin errores, `bun run dev` sirve.
-- [ ] T2 — Pipeline: mover XLSX a `data/`, escribir `scripts/convert-schedule.mts`, generar `src/data/schedules.ts` tipado + metadatos. Check: `bun run convert` regenera sin diff (idempotente), sanity test pasa.
-- [ ] T3 — Lógica: tipos, detección de día (con feriado toggle), normalización/orden de tiempos, próximo colectivo. Tests vitest. Check: `bun run test` verde.
+- [x] T1 — Scaffold: package.json (bun), vite+react+ts, tailwind v4, vitest, fontsource, configs, .gitignore, index.html, git init (rama `feat/colectivo-544-app`). ✅ `bun install`/`typecheck`/`test`/`build` verdes (parent spot-check re-ejecutado). Nota: TS7 exigió `src/vite-env.d.ts`; tsconfig plano (no references).
+- [x] T2 — Pipeline: XLSX movido a `data/Horarios_Linea_544_Buttini.xlsx`, `scripts/convert-schedule.mts` genera `src/data/schedules.ts` (AUTO-GENERATED, determinista). ✅ `bun run convert` ×2 idempotente (SHA-256 igual), 5 sanity tests verdes. El header row se descubre (no se hardcodea índice: hay fila vacía tras metadata).
+- [x] T3 — Lógica: `src/lib/{serviceDay,dayType,schedule}.ts` (puro, sin DOM) + 37 tests nuevos → suite 42/42. ✅ `typecheck`/`test`/`build` verdes (spot-check del padre re-ejecutado). Corrección: `00:00` en ida/habiles está en **Florida**, no en Gral. Paz (verificado por el writer contra los datos reales). Caveat: `nextDayFirstTime` usa la primera hora de la MISMA tabla (no conoce el día siguiente).
 - [ ] T4 — UI: componentes React + Tailwind según design direction; sign con countdown; listados; estados vacíos; a11y. Check: `bun run typecheck`, `bun run build`.
 - [ ] T5 — Docs: AGENTS.md (EN), README.md (ES), breve nota de datos. Check: revisión de contenidos.
 - [ ] T6 — Delivery: commits por unidad de trabajo (conventional), push a `main` de `AlvaroRobles99/colectivo-544`, cierre de feature doc.
@@ -74,7 +74,11 @@ type ScheduleTable = Record<Direction, Partial<Record<DayType, Record<string, St
 - Verificación de caminos/símbolos reclamados por writers (gate anti-hallucination).
 
 ## Progress
-- (vacío hasta T1)
+- T1+T2 ✅ cerrados por work-unit commit `9b04c3d` (unidad atómica: scaffold+pipeline son co-dependientes; cada commit queda buildable y test verde).
+- Verificación: parent spot-check `typecheck`/`test`(5)/`build` re-ejecutados OK; writer reportó comandos con resultados observados iguales.
+- Verificación independiente T1+T2: **PASS** (6/6). Cross-check propio del workbook: 55 celdas de parada, 0 mismatches; idempotencia por SHA-256; 15/15 artefactos existen; config verificada. Hallazgos del verificador (dato fuente, no código): (a) Vuelta-Sábados `Florida 15:57` vs `Av. Gral. Paz esq. Granaderos 15:20` en la misma fila = inconsistencia del Excel (se transcribe fiel); (b) `E.T.O. San Rafael 20:25` duplicado en dos celdas (se deduplica); (c) `xlsx.readFile` frágil bajo bun/Windows (`Bun.file()+XLSX.read` es el fallback probado).
+- Entrega: estrategia `ask-on-risk` resuelta por la usuaria → **push directo a main** (sin PRs). Un solo slice: todo el branch `feat/colectivo-544-app` → `main`. Presupuesto >400 autorizado por decisión explícita.
+- RDD: `gentle-ai review assess` → `unassessable` + STATUS preflight → typed failure `immutable_review_transport_unsupported` (`next_action: stop`). OpenCode no es runtime elegible para receipt review (solo claude-code/codex). No se toca el switch (user-owned). Se aplica path RDD-off: tier high/unassessable → verificador independiente (hecho para T1+T2).
 
 ## Next step
-- T1: scaffold.
+- T4 (UI).
