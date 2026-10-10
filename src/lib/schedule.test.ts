@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { schedules, stopOrder, type DayType, type Direction } from "../data/schedules";
-import { getNextDeparture, getStopsFor, getStopSchedule, hasService, splitPassedAndUpcoming } from "./schedule";
+import { schedules, stopOrderByDirection, type DayType, type Direction } from "../data/schedules";
+import { getNextDeparture, getStopsFor, getStopsForDirection, getStopSchedule, hasService, splitPassedAndUpcoming } from "./schedule";
 import { toServiceMinutes } from "./serviceDay";
 
 const DIRECTIONS: Direction[] = ["ida", "vuelta"];
@@ -9,17 +9,34 @@ const DAYS: DayType[] = ["habiles", "sabados", "domingos"];
 const FRIDAY = new Date(2026, 9, 9);
 
 describe("getStopsFor", () => {
-  it("matches the schedule keys of every direction/day cell, in stopOrder order", () => {
+  it("matches the schedule keys of every direction/day cell, in that direction's route order", () => {
     for (const direction of DIRECTIONS) {
       for (const day of DAYS) {
         const cell = schedules[direction][day] ?? {};
         const keys = Object.keys(cell);
         expect(getStopsFor(direction, day)).toEqual(
-          stopOrder.filter((stop) => cell[stop] !== undefined),
+          stopOrderByDirection[direction].filter((stop) => cell[stop] !== undefined),
         );
         expect(getStopsFor(direction, day).length).toBe(keys.length);
       }
     }
+  });
+
+  it("lists vuelta in its own route order: Bella Vista first, El Progreso between Babacce and B° Salto", () => {
+    const stops = getStopsForDirection("vuelta");
+    expect(stops[0]).toBe("Bella Vista");
+    expect(stops.indexOf("El Progreso")).toBe(stops.indexOf("Babacce") + 1);
+    expect(stops.indexOf("B° Salto")).toBe(stops.indexOf("El Progreso") + 1);
+  });
+
+  it("puts the Sunday-only E.T.O. San Rafael last on the vuelta route", () => {
+    const stops = getStopsForDirection("vuelta");
+    expect(stops[stops.length - 1]).toBe("E.T.O. San Rafael");
+  });
+
+  it("never reverses ida order: vuelta order is not the ida order", () => {
+    expect(getStopsForDirection("vuelta")).not.toEqual(getStopsForDirection("ida"));
+    expect(getStopsForDirection("ida")[0]).toBe("Av. Gral. Paz esq. Granaderos");
   });
 
   it("excludes El Progreso on vuelta/sabados", () => {

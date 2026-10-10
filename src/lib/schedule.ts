@@ -1,4 +1,4 @@
-import { schedules, stopOrder, type DayType, type Direction, type StopSchedule, type TimeStr } from "../data/schedules";
+import { schedules, stopOrder, stopOrderByDirection, type DayType, type Direction, type StopSchedule, type TimeStr } from "../data/schedules";
 import { toServiceMinutes, toServiceNowMinutes } from "./serviceDay";
 
 export interface NextDeparture {
@@ -7,10 +7,20 @@ export interface NextDeparture {
   nextDayFirstTime: TimeStr | null; // only when time === null: first departure of the NEXT service day at that stop
 }
 
-/** Stops that actually have service for that direction/day, in route order (filter `stopOrder`). */
+/** Route order for a direction (each direction has its own travel order); falls back to the global stopOrder. */
+function routeOrder(direction: Direction): string[] {
+  return stopOrderByDirection[direction] ?? stopOrder;
+}
+
+/** Route order for a direction, unfiltered — every stop the line serves that way. */
+export function getStopsForDirection(direction: Direction): string[] {
+  return routeOrder(direction);
+}
+
+/** Stops that actually have service for that direction/day, in that direction's route order. */
 export function getStopsFor(direction: Direction, dayType: DayType): string[] {
   const cell = schedules[direction][dayType];
-  return stopOrder.filter((stop) => cell?.[stop] !== undefined);
+  return routeOrder(direction).filter((stop) => cell?.[stop] !== undefined);
 }
 
 /** Schedule entry for a stop, or undefined if that stop has no service that direction/day (e.g. "El Progreso" on vuelta/sabados). */

@@ -900,6 +900,33 @@ export const stopOrder: string[] = [
   "E.T.O. San Rafael"
 ];
 
+export const stopOrderByDirection: Record<Direction, string[]> = {
+  "ida": [
+    "Av. Gral. Paz esq. Granaderos",
+    "Libertador 150",
+    "Los Sauces",
+    "Florida",
+    "Tropezón",
+    "Los Claveles",
+    "Salto de las Rosas",
+    "Babacce",
+    "Bella Vista"
+  ],
+  "vuelta": [
+    "Bella Vista",
+    "Babacce",
+    "El Progreso",
+    "B° Salto",
+    "Salto de las Rosas",
+    "Los Claveles",
+    "Tropezón",
+    "Florida",
+    "Los Sauces",
+    "Av. Gral. Paz esq. Granaderos",
+    "E.T.O. San Rafael"
+  ]
+};
+
 export const terminals: Record<Direction, { from: string; to: string }> = {
   "ida": {
     "from": "Av. Gral. Paz esq. Granaderos",

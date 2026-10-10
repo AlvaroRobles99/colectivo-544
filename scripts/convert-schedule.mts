@@ -75,6 +75,15 @@ const STOP_ORDER_SCAN = [
   "Vuelta - Dom. y Feriados",
 ];
 
+// Per-direction route order: the union of that direction's sheet header rows by
+// first appearance, scanning weekdays, then Saturdays, then Sundays. This is the
+// real travel order for each direction (the global stopOrder interleaves both
+// directions, so it lists vuelta back-to-front).
+const DIRECTION_SCAN: Record<Direction, string[]> = {
+  ida: ["Ida - Hábiles", "Ida - Sábados", "Ida - Domingos y Feriados"],
+  vuelta: ["Vuelta - Hábiles", "Vuelta - Sábados", "Vuelta - Dom. y Feriados"],
+};
+
 const TIME_RE = /^(\d{2}):(\d{2})$/;
 
 function parseTime(value: string): TimeStr | null {
@@ -287,6 +296,29 @@ function buildStopOrder(parsedBySheet: Map<string, ParsedSheet>): string[] {
   return order;
 }
 
+function buildStopOrderByDirection(
+  parsedBySheet: Map<string, ParsedSheet>,
+): Record<Direction, string[]> {
+  const collect = (direction: Direction): string[] => {
+    const order: string[] = [];
+    const seen = new Set<string>();
+    for (const sheetName of DIRECTION_SCAN[direction]) {
+      const parsed = parsedBySheet.get(sheetName);
+      if (parsed === undefined) {
+        continue;
+      }
+      for (const stop of parsed.stops) {
+        if (!seen.has(stop)) {
+          seen.add(stop);
+          order.push(stop);
+        }
+      }
+    }
+    return order;
+  };
+  return { ida: collect("ida"), vuelta: collect("vuelta") };
+}
+
 function buildTerminals(parsedBySheet: Map<string, ParsedSheet>): Record<Direction, { from: string; to: string }> {
   const terminals = (direction: Direction): { from: string; to: string } => {
     const parsed = parsedBySheet.get(direction === "ida" ? "Ida - Hábiles" : "Vuelta - Hábiles");
@@ -307,6 +339,7 @@ function render(parsedSheets: ParsedSheet[]): string {
   const line = parseLineInfo(habilesIda);
   const schedules = buildSchedules(parsedSheets);
   const stopOrder = buildStopOrder(bySheetName);
+  const stopOrderByDirection = buildStopOrderByDirection(bySheetName);
   const terminals = buildTerminals(bySheetName);
 
   const lines: string[] = [
@@ -335,6 +368,8 @@ function render(parsedSheets: ParsedSheet[]): string {
     `export const schedules: Record<Direction, Partial<Record<DayType, Record<string, StopSchedule>>>> = ${format(schedules)};`,
     "",
     `export const stopOrder: string[] = ${format(stopOrder)};`,
+    "",
+    `export const stopOrderByDirection: Record<Direction, string[]> = ${format(stopOrderByDirection)};`,
     "",
     `export const terminals: Record<Direction, { from: string; to: string }> = ${format(terminals)};`,
     "",

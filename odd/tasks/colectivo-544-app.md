@@ -60,7 +60,7 @@ type ScheduleTable = Record<Direction, Partial<Record<DayType, Record<string, St
 - [x] T1 — Scaffold: package.json (bun), vite+react+ts, tailwind v4, vitest, fontsource, configs, .gitignore, index.html, git init (rama `feat/colectivo-544-app`). ✅ `bun install`/`typecheck`/`test`/`build` verdes (parent spot-check re-ejecutado). Nota: TS7 exigió `src/vite-env.d.ts`; tsconfig plano (no references).
 - [x] T2 — Pipeline: XLSX movido a `data/Horarios_Linea_544_Buttini.xlsx`, `scripts/convert-schedule.mts` genera `src/data/schedules.ts` (AUTO-GENERATED, determinista). ✅ `bun run convert` ×2 idempotente (SHA-256 igual), 5 sanity tests verdes. El header row se descubre (no se hardcodea índice: hay fila vacía tras metadata).
 - [x] T3 — Lógica: `src/lib/{serviceDay,dayType,schedule}.ts` (puro, sin DOM) + 37 tests nuevos → suite 42/42. ✅ `typecheck`/`test`/`build` verdes (spot-check del padre re-ejecutado). Corrección: `00:00` en ida/habiles está en **Florida**, no en Gral. Paz (verificado por el writer contra los datos reales). Caveat: `nextDayFirstTime` usa la primera hora de la MISMA tabla (no conoce el día siguiente).
-- [ ] T4 — UI: componentes React + Tailwind según design direction; sign con countdown; listados; estados vacíos; a11y. Check: `bun run typecheck`, `bun run build`.
+- [x] T4 — UI: componentes React + Tailwind (Header, DayTabs, HolidayToggle, DirectionSwitch, StopPicker, Sign, ScheduleList, hook useNowMinute). Sign con countdown 1s (re-render solo si cambia el minuto), 4 estados (sin parada/no servicio/día terminado/normal), reduced-motion respetado, localStorage. ✅ `typecheck`/`test`(46)/`build`/smoke 200 verdes (spot-check del padre re-ejecutado). Enmienda incluida: `stopOrderByDirection` por dirección (vuelta arranca en Bella Vista) — convert regenerado idempotente.
 - [ ] T5 — Docs: AGENTS.md (EN), README.md (ES), breve nota de datos. Check: revisión de contenidos.
 - [ ] T6 — Delivery: commits por unidad de trabajo (conventional), push a `main` de `AlvaroRobles99/colectivo-544`, cierre de feature doc.
 
@@ -81,4 +81,4 @@ type ScheduleTable = Record<Direction, Partial<Record<DayType, Record<string, St
 - RDD: `gentle-ai review assess` → `unassessable` + STATUS preflight → typed failure `immutable_review_transport_unsupported` (`next_action: stop`). OpenCode no es runtime elegible para receipt review (solo claude-code/codex). No se toca el switch (user-owned). Se aplica path RDD-off: tier high/unassessable → verificador independiente (hecho para T1+T2).
 
 ## Next step
-- T4 (UI).
+- T5 (docs) → T6 (delivery: merge a main + push).

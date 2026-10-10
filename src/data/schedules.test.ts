@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { schedules, stopOrder, type DayType, type Direction } from "./schedules";
+import { schedules, stopOrder, stopOrderByDirection, type DayType, type Direction } from "./schedules";
 
 const DIRECTIONS: Direction[] = ["ida", "vuelta"];
 const DAYS: DayType[] = ["habiles", "sabados", "domingos"];
@@ -74,6 +74,19 @@ describe("schedules data sanity", () => {
       for (const day of DAYS) {
         for (const stop of Object.keys(schedules[direction][day] ?? {})) {
           expect(known.has(stop), `${stop} is missing from stopOrder`).toBe(true);
+        }
+      }
+    }
+  });
+
+  it("stopOrderByDirection covers every stop key of its own direction, with no duplicates", () => {
+    for (const direction of DIRECTIONS) {
+      const order = stopOrderByDirection[direction];
+      const known = new Set(order);
+      expect(known.size, `${direction} has duplicate stops`).toBe(order.length);
+      for (const day of DAYS) {
+        for (const stop of Object.keys(schedules[direction][day] ?? {})) {
+          expect(known.has(stop), `${stop} is missing from stopOrderByDirection.${direction}`).toBe(true);
         }
       }
     }
