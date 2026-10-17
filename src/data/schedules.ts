@@ -27,7 +27,7 @@ export const line: LineInfo = {
   ],
   "period": "Invierno 2026",
   "sourceFile": "data/Horarios_Linea_544_Buttini.xlsx",
-  "sourceLastModified": "2026-10-10T02:00:13.607Z"
+  "sourceLastModified": "2026-10-17T22:42:59.392Z"
 };
 
 export const schedules: Record<Direction, Partial<Record<DayType, Record<string, StopSchedule>>>> = {
@@ -724,7 +724,8 @@ export const schedules: Record<Direction, Partial<Record<DayType, Record<string,
           "13:00",
           "13:32",
           "15:52",
-          "17:57"
+          "17:57",
+          "19:47"
         ]
       },
       "Florida": {
