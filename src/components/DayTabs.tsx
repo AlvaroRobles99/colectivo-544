@@ -1,5 +1,6 @@
 import type { DayType } from "../data/schedules";
-import { DAY_TYPE_LABELS, DAY_TYPE_SHORT_LABELS } from "../lib/dayType";
+import { fill } from "../lib/i18n";
+import { useLanguage } from "./LanguageProvider";
 
 const ORDER: DayType[] = ["habiles", "sabados", "domingos"];
 
@@ -13,17 +14,19 @@ interface DayTabsProps {
 
 /** Segmented day selector with an honest caption about what is being shown. */
 export function DayTabs({ value, onChange, holiday, detected, weekdayLabel }: DayTabsProps) {
+  const { t } = useLanguage();
+
   const caption = holiday
-    ? "Feriado activo: se muestra el cuadro de domingos y feriados."
+    ? t.dayTabs.captionHoliday
     : value === detected
-      ? `Hoy es ${weekdayLabel} — cuadro de ${DAY_TYPE_LABELS[value].toLowerCase()}.`
-      : "Estás viendo otro día.";
+      ? fill(t.dayTabs.captionToday, { weekday: weekdayLabel, day: t.dayLabels[value].toLowerCase() })
+      : t.dayTabs.captionOther;
 
   return (
-    <section aria-label="Día del servicio">
+    <section aria-label={t.dayTabs.sectionLabel}>
       <div
         role="group"
-        aria-label="Elegir el cuadro de horarios"
+        aria-label={t.dayTabs.groupLabel}
         className="flex rounded-lg border border-hairline bg-card p-1"
       >
         {ORDER.map((day) => {
@@ -39,7 +42,7 @@ export function DayTabs({ value, onChange, holiday, detected, weekdayLabel }: Da
                 active ? "bg-ink text-paper" : "text-slate hover:text-ink"
               } ${holiday && !active ? "opacity-40" : ""}`}
             >
-              {DAY_TYPE_SHORT_LABELS[day]}
+              {t.dayShortLabels[day]}
             </button>
           );
         })}

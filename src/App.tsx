@@ -3,44 +3,25 @@ import { DayTabs } from "./components/DayTabs";
 import { DirectionSwitch } from "./components/DirectionSwitch";
 import { Header } from "./components/Header";
 import { HolidayToggle } from "./components/HolidayToggle";
+import { useLanguage } from "./components/LanguageProvider";
 import { ScheduleList } from "./components/ScheduleList";
 import { Sign } from "./components/Sign";
 import { StopPicker } from "./components/StopPicker";
 import type { DayType, Direction } from "./data/schedules";
 import { resolveDayType } from "./lib/dayType";
 import { getServiceDate } from "./lib/serviceDay";
+import { readStorage, writeStorage } from "./lib/storage";
 
 const DIRECTION_KEY = "colectivo-544:direction";
 const STOP_KEY = "colectivo-544:stop";
 const HOLIDAY_KEY = "colectivo-544:feriado";
-
-const WEEKDAYS = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"];
-
-function readStorage(key: string): string | null {
-  try {
-    return window.localStorage.getItem(key);
-  } catch {
-    return null;
-  }
-}
-
-function writeStorage(key: string, value: string | null): void {
-  try {
-    if (value === null) {
-      window.localStorage.removeItem(key);
-    } else {
-      window.localStorage.setItem(key, value);
-    }
-  } catch {
-    // Storage can be unavailable (e.g. private mode); the app still works.
-  }
-}
 
 function readDirection(): Direction {
   return readStorage(DIRECTION_KEY) === "vuelta" ? "vuelta" : "ida";
 }
 
 export default function App() {
+  const { t } = useLanguage();
   const [direction, setDirection] = useState<Direction>(readDirection);
   const [stop, setStop] = useState<string | null>(() => readStorage(STOP_KEY));
   const [holiday, setHoliday] = useState<boolean>(() => readStorage(HOLIDAY_KEY) === "true");
@@ -58,7 +39,7 @@ export default function App() {
 
   const serviceDate = getServiceDate(new Date());
   const detectedDayType = resolveDayType(serviceDate, false);
-  const weekdayLabel = WEEKDAYS[serviceDate.getDay()];
+  const weekdayLabel = t.weekdays[serviceDate.getDay()];
 
   return (
     <div className="min-h-dvh bg-paper">

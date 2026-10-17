@@ -1,4 +1,5 @@
 import { terminals, type Direction } from "../data/schedules";
+import { useLanguage } from "./LanguageProvider";
 
 const ORDER: Direction[] = ["ida", "vuelta"];
 
@@ -14,11 +15,13 @@ interface DirectionSwitchProps {
 
 /** Segmented ida/vuelta selector; each option names the route it travels. */
 export function DirectionSwitch({ value, onChange }: DirectionSwitchProps) {
+  const { t } = useLanguage();
+
   return (
-    <section aria-label="Dirección del viaje">
+    <section aria-label={t.direction.sectionLabel}>
       <div
         role="group"
-        aria-label="Elegir la dirección"
+        aria-label={t.direction.groupLabel}
         className="flex rounded-lg border border-hairline bg-card p-1"
       >
         {ORDER.map((direction) => {
@@ -34,7 +37,9 @@ export function DirectionSwitch({ value, onChange }: DirectionSwitchProps) {
                 active ? "bg-ink text-paper" : "text-slate hover:text-ink"
               }`}
             >
-              <span className="font-display text-sm font-bold">{direction === "ida" ? "Ida" : "Vuelta"}</span>
+              <span className="font-display text-sm font-bold">
+                {direction === "ida" ? t.direction.ida : t.direction.vuelta}
+              </span>
               <span className="font-mono text-[10px] leading-tight opacity-80">
                 {shortStop(from)} → {shortStop(to)}
               </span>

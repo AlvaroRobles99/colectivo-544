@@ -1,8 +1,9 @@
 import type { ReactNode } from "react";
 import type { DayType, Direction } from "../data/schedules";
 import { useNowMinute } from "../hooks/useNowMinute";
-import { DAY_TYPE_LABELS } from "../lib/dayType";
+import { fill, type Dictionary } from "../lib/i18n";
 import { getNextDeparture, hasService } from "../lib/schedule";
+import { useLanguage } from "./LanguageProvider";
 
 interface SignProps {
   direction: Direction;
@@ -10,10 +11,9 @@ interface SignProps {
   stop: string | null;
 }
 
-function formatCountdown(minutes: number): string {
-  if (minutes <= 0) return "AHORA";
-  if (minutes === 1) return "EN 1 MIN";
-  return `EN ${minutes} MIN`;
+function formatCountdown(t: Dictionary, minutes: number): string {
+  if (minutes <= 0) return t.sign.countdownNow;
+  return fill(t.sign.countdownIn, { n: minutes });
 }
 
 /**
@@ -23,28 +23,25 @@ function formatCountdown(minutes: number): string {
  */
 export function Sign({ direction, dayType, stop }: SignProps) {
   const now = useNowMinute();
+  const { t } = useLanguage();
 
   let body: ReactNode;
   if (stop === null) {
     body = (
       <>
         <p className="font-mono text-2xl font-bold leading-snug tracking-[0.05em] text-amber">
-          SELECCIONÁ TU PARADA
+          {t.sign.emptyStopTitle}
         </p>
-        <p className="mt-2 text-sm leading-relaxed text-paper/70">
-          Elegí una parada y acá aparece el próximo colectivo.
-        </p>
+        <p className="mt-2 text-sm leading-relaxed text-paper/70">{t.sign.emptyStopBody}</p>
       </>
     );
   } else if (!hasService(direction, dayType, stop)) {
     body = (
       <>
         <p className="font-mono text-2xl font-bold leading-snug tracking-[0.05em] text-amber">
-          SIN SERVICIO
+          {t.sign.noServiceTitle}
         </p>
-        <p className="mt-2 text-sm leading-relaxed text-paper/70">
-          No hay colectivos en esta parada hoy.
-        </p>
+        <p className="mt-2 text-sm leading-relaxed text-paper/70">{t.sign.noServiceBody}</p>
       </>
     );
   } else {
@@ -53,13 +50,13 @@ export function Sign({ direction, dayType, stop }: SignProps) {
       body = (
         <>
           <p className="font-mono text-xl font-bold leading-snug tracking-[0.05em] text-amber">
-            NO QUEDAN MÁS SERVICIOS HOY
+            {t.sign.doneTitle}
           </p>
           {departure.nextDayFirstTime !== null && (
             <p className="mt-3 text-xs leading-relaxed text-paper/70">
-              Primera salida del próximo día:{" "}
-              <span className="font-mono font-semibold text-paper">{departure.nextDayFirstTime}</span> —
-              cuadro de {DAY_TYPE_LABELS[dayType].toLowerCase()}.
+              {t.sign.nextDayLead}{" "}
+              <span className="font-mono font-semibold text-paper">{departure.nextDayFirstTime}</span> —{" "}
+              {fill(t.sign.nextDayTail, { day: t.dayLabels[dayType].toLowerCase() })}
             </p>
           )}
         </>
@@ -68,13 +65,13 @@ export function Sign({ direction, dayType, stop }: SignProps) {
       body = (
         <>
           <p className="font-mono text-xs font-semibold uppercase tracking-[0.3em] text-amber/80">
-            PRÓXIMO
+            {t.sign.upcomingLabel}
           </p>
           <p className="mt-1 font-mono text-6xl font-bold tabular-nums leading-none text-amber">
             {departure.time}
           </p>
           <p className="mt-2 font-mono text-sm font-bold tracking-[0.2em] text-amber">
-            {formatCountdown(departure.minutesUntil ?? 0)}
+            {formatCountdown(t, departure.minutesUntil ?? 0)}
           </p>
         </>
       );
@@ -83,7 +80,7 @@ export function Sign({ direction, dayType, stop }: SignProps) {
 
   return (
     <section
-      aria-label="Próximo colectivo"
+      aria-label={t.sign.sectionLabel}
       aria-live="polite"
       className="sign-lights-on relative overflow-hidden rounded-xl bg-ink px-5 py-6 shadow-[inset_0_1px_0_rgba(255,178,36,0.25),inset_0_0_48px_rgba(255,178,36,0.06)]"
     >

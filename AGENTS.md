@@ -54,6 +54,7 @@ bun run convert  # Convert XLSX to src/data/schedules.ts
 - `colectivo-544:direction` — `"ida"` | `"vuelta"`
 - `colectivo-544:stop` — stop name (string) | null
 - `colectivo-544:feriado` — `"true"` | `"false"` (holiday toggle)
+- `colectivo-544:lang` — `"es"` | `"en"` (UI language; first visit auto-detects from the browser's first locale, then only a manual toggle writes this key. Text in `src/lib/i18n.ts`, provider in `src/components/LanguageProvider.tsx`)
 
 ## Known quirks & common pitfalls
 - xlsx under Bun/Windows: prefer the conversion script as written; avoid calling `xlsx.readFile` in ad-hoc shell in ways that differ. The script handles cell types (including potential Excel time serials defensively).

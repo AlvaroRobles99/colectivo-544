@@ -1,6 +1,8 @@
 import { useMemo, useState } from "react";
 import type { DayType, Direction } from "../data/schedules";
+import { fill } from "../lib/i18n";
 import { getStopSchedule, getStopsForDirection } from "../lib/schedule";
+import { useLanguage } from "./LanguageProvider";
 
 /** Case- and accent-insensitive match so "salto" finds "B° Salto". */
 function normalize(value: string): string {
@@ -20,6 +22,7 @@ interface StopPickerProps {
  * shows up instead of a stop silently missing.
  */
 export function StopPicker({ direction, dayType, selected, onSelect }: StopPickerProps) {
+  const { t } = useLanguage();
   const [open, setOpen] = useState(selected === null);
   const [query, setQuery] = useState("");
 
@@ -39,35 +42,37 @@ export function StopPicker({ direction, dayType, selected, onSelect }: StopPicke
       <button
         type="button"
         onClick={() => setOpen(true)}
-        aria-label={`Cambiar parada. Parada elegida: ${selected ?? "ninguna"}`}
+        aria-label={fill(t.stopPicker.changeAria, { stop: selected ?? t.stopPicker.noneValue })}
         className="flex min-h-11 w-full items-center justify-between gap-2 rounded-lg border border-hairline bg-card px-3 py-2 text-left transition-colors hover:border-ink"
       >
         <span className="min-w-0">
-          <span className="block font-mono text-[10px] uppercase tracking-[0.18em] text-slate">Parada</span>
+          <span className="block font-mono text-[10px] uppercase tracking-[0.18em] text-slate">
+            {t.stopPicker.fieldLabel}
+          </span>
           <span className="block truncate text-sm font-semibold text-ink">{selected}</span>
         </span>
-        <span className="shrink-0 text-xs font-semibold text-amber">Cambiar</span>
+        <span className="shrink-0 text-xs font-semibold text-amber">{t.stopPicker.changeLabel}</span>
       </button>
     );
   }
 
   return (
-    <section aria-label="Elegir parada" className="rounded-lg border border-hairline bg-card p-3">
+    <section aria-label={t.stopPicker.sectionLabel} className="rounded-lg border border-hairline bg-card p-3">
       <label htmlFor="stop-search" className="sr-only">
-        Buscar parada
+        {t.stopPicker.searchLabel}
       </label>
       <input
         id="stop-search"
         type="search"
         value={query}
         onChange={(event) => setQuery(event.target.value)}
-        placeholder="Buscar parada…"
+        placeholder={t.stopPicker.searchPlaceholder}
         autoComplete="off"
         className="h-11 w-full rounded-md border border-hairline bg-paper px-3 text-sm text-ink placeholder:text-slate"
       />
       <ul className="mt-2 max-h-80 divide-y divide-hairline overflow-y-auto">
         {stops.length === 0 ? (
-          <li className="px-1 py-3 text-sm text-slate">No hay paradas que coincidan</li>
+          <li className="px-1 py-3 text-sm text-slate">{t.stopPicker.noMatches}</li>
         ) : (
           stops.map((stop) => {
             const count = getStopSchedule(direction, dayType, stop)?.times.length ?? 0;
@@ -86,7 +91,7 @@ export function StopPicker({ direction, dayType, selected, onSelect }: StopPicke
                     {stop}
                   </span>
                   {count === 0 ? (
-                    <span className="shrink-0 text-xs text-slate">Sin servicio</span>
+                    <span className="shrink-0 text-xs text-slate">{t.stopPicker.noService}</span>
                   ) : (
                     <span className="shrink-0 font-mono text-xs text-ink/70">{count}</span>
                   )}

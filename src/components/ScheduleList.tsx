@@ -1,17 +1,14 @@
 import type { DayType, Direction, TimeStr } from "../data/schedules";
 import { useNowMinute } from "../hooks/useNowMinute";
 import { getStopSchedule, splitPassedAndUpcoming } from "../lib/schedule";
+import { useLanguage } from "./LanguageProvider";
 
 /** Marker glyphs rendered as superscripts; the legend below maps each to its note. */
 const MARKERS = ["†", "‡", "*", "§"];
 
-/** Friendly legend for the spreadsheet's own note wording. */
-const NOTE_LEGENDS: Record<string, string> = {
-  "HASTA EL MATADERO": "El viaje termina en el Matadero / Salto de las Rosas",
-};
-
-function legendFor(note: string): string {
-  const mapped = NOTE_LEGENDS[note];
+/** Friendly legend for the spreadsheet's own note wording (per-language in the dictionary). */
+function legendFor(note: string, notes: Record<string, string>): string {
+  const mapped = notes[note];
   if (mapped !== undefined) return mapped;
   return note.charAt(0).toUpperCase() + note.slice(1).toLowerCase();
 }
@@ -25,17 +22,14 @@ interface ScheduleListProps {
 /** Full timetable for one stop: hour groups, passed/upcoming, and note footnotes. */
 export function ScheduleList({ direction, dayType, stop }: ScheduleListProps) {
   const now = useNowMinute();
+  const { t } = useLanguage();
   const schedule = getStopSchedule(direction, dayType, stop);
 
   if (schedule === undefined || schedule.times.length === 0) {
     return (
-      <section aria-label="Horarios del día" className="rounded-lg border border-hairline bg-card px-4 py-6 text-center">
-        <p className="font-display text-base font-extrabold text-ink">
-          Sin servicios hoy en esta parada
-        </p>
-        <p className="mt-1 text-sm leading-relaxed text-slate">
-          Probá con otra dirección u otro día.
-        </p>
+      <section aria-label={t.scheduleList.sectionLabel} className="rounded-lg border border-hairline bg-card px-4 py-6 text-center">
+        <p className="font-display text-base font-extrabold text-ink">{t.scheduleList.emptyTitle}</p>
+        <p className="mt-1 text-sm leading-relaxed text-slate">{t.scheduleList.emptyBody}</p>
       </section>
     );
   }
@@ -69,14 +63,16 @@ export function ScheduleList({ direction, dayType, stop }: ScheduleListProps) {
     }
   }
 
-  const countLabel = `${schedule.times.length} ${schedule.times.length === 1 ? "salida" : "salidas"}`;
+  const departures =
+    schedule.times.length === 1 ? t.scheduleList.departuresOne : t.scheduleList.departuresOther;
+  const countLabel = `${schedule.times.length} ${departures}`;
 
   return (
-    <section aria-label="Horarios del día" className="rounded-lg border border-hairline bg-card">
+    <section aria-label={t.scheduleList.sectionLabel} className="rounded-lg border border-hairline bg-card">
       <header className="flex items-end justify-between gap-3 border-b border-hairline px-4 py-3">
         <h2 className="min-w-0">
           <span className="block font-mono text-[10px] font-semibold uppercase tracking-[0.18em] text-slate">
-            Horarios
+            {t.scheduleList.headingLabel}
           </span>
           <span className="block truncate font-display text-base font-extrabold text-ink">
             {stop}
@@ -94,7 +90,8 @@ export function ScheduleList({ direction, dayType, stop }: ScheduleListProps) {
         {groups.map((group) => (
           <div key={group.hour}>
             <h3 className="sticky top-[59px] z-10 -mx-4 border-b border-hairline bg-card px-4 py-1.5 font-mono text-xs font-semibold tracking-[0.18em] text-slate">
-              {group.hour} h
+              {group.hour}
+              {t.scheduleList.hourSuffix}
             </h3>
             <ul className="flex flex-wrap gap-1.5 py-3">
               {group.times.map((time) => {
@@ -129,7 +126,7 @@ export function ScheduleList({ direction, dayType, stop }: ScheduleListProps) {
             {notes.map((note, index) => (
               <li key={index} className="text-xs leading-relaxed text-slate">
                 <span className="mr-1 text-amber">{MARKERS[index % MARKERS.length]}</span>
-                {legendFor(note.note)}
+                {legendFor(note.note, t.scheduleList.noteLegends)}
               </li>
             ))}
           </ul>
