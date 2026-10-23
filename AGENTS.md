@@ -38,7 +38,7 @@ bun run convert  # Convert XLSX to src/data/schedules.ts
 ## Agent workflow
 - Read relevant context first (odd/tasks, src/, scripts/, package.json) before conclusions.
 - Make minimal, targeted changes. Do not modify generated files (`src/data/schedules.ts`) or committed data blindly.
-- **No commits, no pushes, no `gentle-ai`** unless explicitly instructed by the user/orchestrator.
+- Commits, pushes and pull requests are authorized standing delivery work (see Git rules). Do not run `gentle-ai` unless explicitly instructed.
 - Fresh context: verify symbols/paths against codebase; do not assume.
 - If unsure, ask (ask-on-risk). Keep responses short unless detail required.
 - Never add AI attribution to commits (conventional commits only).
@@ -67,9 +67,11 @@ bun run convert  # Convert XLSX to src/data/schedules.ts
 - `nextDayFirstTime` returns first time of the same table (does not peek next calendar day type) — documented behavior in lib.
 
 ## Git rules
+- Delivery is authorized standing work: branch, commit, push, and open a pull request without asking again.
+- Flow: create a topic branch from `main` (never commit directly to `main`), commit in small reviewable units, push the branch, then open the PR with `gh pr create --base main`.
 - No AI attribution ("Co-Authored-By", etc.)
 - Conventional commits only
-- Do not commit unless explicitly requested
+- Never merge, never force-push, never delete remote branches
 - Do not run `gentle-ai`
 - Small, reviewable units when relevant
 - Keep repo buildable between changes
