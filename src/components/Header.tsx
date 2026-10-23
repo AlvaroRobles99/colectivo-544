@@ -1,6 +1,7 @@
 import { line } from "../data/schedules";
 import { fill, LANGS, type Lang } from "../lib/i18n";
 import { useLanguage } from "./LanguageProvider";
+import { ThemeToggle } from "./ThemeToggle";
 
 /** Sticky line-identity bar: amber stripe, 544 chip, line name, byline and the language switch. */
 export function Header() {
@@ -10,7 +11,7 @@ export function Header() {
     <header className="sticky top-0 z-20 border-b border-hairline bg-paper/90 backdrop-blur">
       <div aria-hidden="true" className="h-[3px] bg-amber" />
       <div className="mx-auto flex h-14 w-full max-w-md items-center gap-3 px-4">
-        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-amber font-display text-base font-extrabold leading-none text-ink">
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-amber font-display text-base font-extrabold leading-none text-on-amber">
           544
         </span>
         <div className="min-w-0">
@@ -43,6 +44,7 @@ export function Header() {
             );
           })}
         </div>
+        <ThemeToggle />
       </div>
     </header>
   );

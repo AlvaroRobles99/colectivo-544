@@ -51,7 +51,7 @@ export function StopPicker({ direction, dayType, selected, onSelect }: StopPicke
           </span>
           <span className="block truncate text-sm font-semibold text-ink">{selected}</span>
         </span>
-        <span className="shrink-0 text-xs font-semibold text-amber">{t.stopPicker.changeLabel}</span>
+        <span className="shrink-0 text-xs font-semibold text-amber-ink">{t.stopPicker.changeLabel}</span>
       </button>
     );
   }

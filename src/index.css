@@ -5,12 +5,48 @@
   --color-paper: #f2f5f9;
   --color-card: #ffffff;
   --color-amber: #ffb224;
+  /* Amber as *type* on a light surface: the brand hue sits at 1.8:1 on white,
+     so text uses a darker step of the same hue. */
+  --color-amber-ink: #8a5a00;
   --color-slate: #5c6b7e;
   --color-hairline: #d8dfe8;
+
+  /* Theme-independent surfaces. The departure board is always a dark panel with
+     light type, and any label sitting on amber always uses dark ink: inverting
+     them with the rest of the palette would destroy the sign identity and the
+     contrast of the 544 chip. */
+  --color-board: #0b1a2e;
+  --color-board-ink: #f2f5f9;
+  --color-on-amber: #0b1a2e;
 
   --font-display: "Archivo Variable", "Archivo", system-ui, -apple-system, sans-serif;
   --font-body: "Instrument Sans Variable", "Instrument Sans", system-ui, -apple-system, sans-serif;
   --font-mono: "JetBrains Mono Variable", "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+/*
+ * Dark palette: the same navy family, re-tuned per surface instead of inverted.
+ * Every semantic token keeps its role, so components never need a `dark:` variant.
+ * Contrast is pinned by src/lib/theme.contrast.test.ts.
+ */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --color-ink: #e9eff7;
+  --color-paper: #0a1524;
+  --color-card: #111f33;
+  --color-slate: #93a3b8;
+  --color-hairline: #22364f;
+  --color-amber: #ffb224;
+  --color-amber-ink: #ffb224;
+
+  --color-board: #060d18;
+  --color-board-ink: #eaf0f8;
+  --color-on-amber: #0b1a2e;
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
 }
 
 @layer base {

@@ -17,7 +17,7 @@ function formatCountdown(t: Dictionary, minutes: number): string {
 }
 
 /**
- * The departure board — the one memorable element: ink panel, mono amber type,
+ * The departure board — the one memorable element: always-dark panel, mono amber type,
  * next departure plus a live countdown. Quiet states (no stop, no service, day
  * over) keep the same board language instead of decorating elsewhere.
  */
@@ -32,7 +32,7 @@ export function Sign({ direction, dayType, stop }: SignProps) {
         <p className="font-mono text-2xl font-bold leading-snug tracking-[0.05em] text-amber">
           {t.sign.emptyStopTitle}
         </p>
-        <p className="mt-2 text-sm leading-relaxed text-paper/70">{t.sign.emptyStopBody}</p>
+        <p className="mt-2 text-sm leading-relaxed text-board-ink/70">{t.sign.emptyStopBody}</p>
       </>
     );
   } else if (!hasService(direction, dayType, stop)) {
@@ -41,7 +41,7 @@ export function Sign({ direction, dayType, stop }: SignProps) {
         <p className="font-mono text-2xl font-bold leading-snug tracking-[0.05em] text-amber">
           {t.sign.noServiceTitle}
         </p>
-        <p className="mt-2 text-sm leading-relaxed text-paper/70">{t.sign.noServiceBody}</p>
+        <p className="mt-2 text-sm leading-relaxed text-board-ink/70">{t.sign.noServiceBody}</p>
       </>
     );
   } else {
@@ -53,9 +53,9 @@ export function Sign({ direction, dayType, stop }: SignProps) {
             {t.sign.doneTitle}
           </p>
           {departure.nextDayFirstTime !== null && (
-            <p className="mt-3 text-xs leading-relaxed text-paper/70">
+            <p className="mt-3 text-xs leading-relaxed text-board-ink/70">
               {t.sign.nextDayLead}{" "}
-              <span className="font-mono font-semibold text-paper">{departure.nextDayFirstTime}</span> —{" "}
+              <span className="font-mono font-semibold text-board-ink">{departure.nextDayFirstTime}</span> —{" "}
               {fill(t.sign.nextDayTail, { day: t.dayLabels[dayType].toLowerCase() })}
             </p>
           )}
@@ -82,10 +82,10 @@ export function Sign({ direction, dayType, stop }: SignProps) {
     <section
       aria-label={t.sign.sectionLabel}
       aria-live="polite"
-      className="sign-lights-on relative overflow-hidden rounded-xl bg-ink px-5 py-6 shadow-[inset_0_1px_0_rgba(255,178,36,0.25),inset_0_0_48px_rgba(255,178,36,0.06)]"
+      className="sign-lights-on relative overflow-hidden rounded-xl bg-board px-5 py-6 shadow-[inset_0_1px_0_rgba(255,178,36,0.25),inset_0_0_48px_rgba(255,178,36,0.06)]"
     >
       {stop !== null && (
-        <p className="mb-3 truncate font-mono text-[10px] font-semibold uppercase tracking-[0.2em] text-paper/60">
+        <p className="mb-3 truncate font-mono text-[10px] font-semibold uppercase tracking-[0.2em] text-board-ink/60">
           {stop}
         </p>
       )}

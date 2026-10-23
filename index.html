@@ -8,6 +8,20 @@
       content="Horarios de la Línea 544 de Empresa A. Buttini (San Rafael, Mendoza) — Invierno 2026."
     />
     <meta name="theme-color" content="#0B1A2E" />
+    <script>
+      // Applies the stored appearance before first paint, so a dark session never
+      // flashes light. ThemeProvider re-applies the same attribute on mount.
+      (function () {
+        try {
+          var stored = localStorage.getItem("colectivo-544:theme");
+          var prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+          var dark = stored === "dark" || (stored !== "light" && prefersDark);
+          document.documentElement.setAttribute("data-theme", dark ? "dark" : "light");
+        } catch (error) {
+          document.documentElement.setAttribute("data-theme", "light");
+        }
+      })();
+    </script>
     <title>Colectivo 544 — Horarios</title>
     <link rel="icon" href="/images/favicon/favicon.ico" sizes="any" />
     <link
