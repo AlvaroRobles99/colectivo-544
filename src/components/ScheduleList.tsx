@@ -77,7 +77,7 @@ export function ScheduleList({ direction, dayType, stop }: ScheduleListProps) {
           <span className="block truncate font-display text-base font-extrabold text-ink">
             {stop}
             {generalMarkers.map((index) => (
-              <sup key={index} className="ml-0.5 text-amber">
+              <sup key={index} className="ml-0.5 text-amber-ink">
                 {MARKERS[index % MARKERS.length]}
               </sup>
             ))}
@@ -107,7 +107,7 @@ export function ScheduleList({ direction, dayType, stop }: ScheduleListProps) {
                     >
                       {time}
                       {timedMarkers.get(time)?.map((index) => (
-                        <sup key={index} className="ml-0.5 text-amber">
+                        <sup key={index} className="ml-0.5 text-amber-ink">
                           {MARKERS[index % MARKERS.length]}
                         </sup>
                       ))}
@@ -125,7 +125,7 @@ export function ScheduleList({ direction, dayType, stop }: ScheduleListProps) {
           <ul className="space-y-1">
             {notes.map((note, index) => (
               <li key={index} className="text-xs leading-relaxed text-slate">
-                <span className="mr-1 text-amber">{MARKERS[index % MARKERS.length]}</span>
+                <span className="mr-1 text-amber-ink">{MARKERS[index % MARKERS.length]}</span>
                 {legendFor(note.note, t.scheduleList.noteLegends)}
               </li>
             ))}

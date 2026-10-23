@@ -16,6 +16,12 @@ const es = {
     title: "Colectivo {n}",
     languageLabel: "Idioma",
   },
+  theme: {
+    system: "automático",
+    light: "claro",
+    dark: "oscuro",
+    action: "Tema: {current}. Cambiar a {next}.",
+  },
   dayTabs: {
     sectionLabel: "Día del servicio",
     groupLabel: "Elegir el cuadro de horarios",
@@ -81,6 +87,12 @@ const en: Dictionary = {
   header: {
     title: "Bus {n}",
     languageLabel: "Language",
+  },
+  theme: {
+    system: "automatic",
+    light: "light",
+    dark: "dark",
+    action: "Theme: {current}. Switch to {next}.",
   },
   dayTabs: {
     sectionLabel: "Service day",
